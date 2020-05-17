@@ -9,27 +9,28 @@ fn refresh_board(board: &Vec<Vec<bool>>) {
                 true => "█",
                 false => " ",
             };
-            print!(" {} ", ch);
+            print!("{}", ch);
         });
         print!("|\n");
     });
 }
 
 fn step_board(board: &mut Vec<Vec<bool>>) {
+    let mut next_state = board.clone();
     for x in 0..board.len() {
         for y in 0..board[0].len() {
             let live_neighbour_count = count_live_neighbours(board, x, y);
-            if board[x][y] {
-                if live_neighbour_count < 2 || live_neighbour_count > 3 {
-                    board[x][y] = false;
-                }
-            } else {
-                if live_neighbour_count == 3 {
-                    board[x][y] = true;
-                }
-            }
+            let is_alive = board[x][y];
+            next_state[x][y] = match (is_alive, live_neighbour_count) {
+                (true, x) if x < 2 => false,
+                (true, x) if x > 3 => false,
+                (true, 2) | (true, 3) => true,
+                (false, 3) => true,
+                (otherwise, _) => otherwise,
+            };
         }
     }
+    *board = next_state;
 }
 
 fn count_live_neighbours(board: &Vec<Vec<bool>>, x: usize, y: usize) -> u8 {
@@ -46,38 +47,39 @@ fn count_live_neighbours(board: &Vec<Vec<bool>>, x: usize, y: usize) -> u8 {
     if x > 0 && y < board_y && board[x - 1][y + 1] {
         count += 1;
     }
-
     if y > 0 && board[x][y - 1] {
         count += 1;
     }
-
     if y < board_y && board[x][y + 1] {
         count += 1;
     }
-
     if y > 0 && x < board_x && board[x + 1][y - 1] {
         count += 1;
     }
-
     if x < board_x && board[x + 1][y] {
         count += 1;
     }
-
     if x < board_x && y < board_y && board[x + 1][y + 1] {
         count += 1;
     }
-
+    
     count
 }
 
 fn main() {
-    let mut board = vec![vec![false; 24]; 24];
-    board[1][1] = true;
-    board[1][2] = true;
-    board[1][0] = true;
+    let mut board = vec![vec![false; 12]; 12];
 
-    step_board(&mut board);
-    refresh_board(&board);
+    board[0][1] = true;
+    board[1][2] = true;
+    board[2][0] = true;
+    board[2][1] = true;
+    board[2][2] = true;
+
+    loop {
+        refresh_board(&board);
+        step_board(&mut board);
+        std::thread::sleep(std::time::Duration::from_millis(300));
+    }
 }
 
 #[cfg(test)]
