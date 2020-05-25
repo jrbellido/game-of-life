@@ -35,8 +35,8 @@ fn step_board(board: &mut Vec<Vec<bool>>) {
 
 fn count_live_neighbours(board: &Vec<Vec<bool>>, x: usize, y: usize) -> u8 {
     let mut count = 0;
-    let board_x = board.len() - 1;
-    let board_y = board[0].len() - 1;
+    let board_width = board.len() - 1;
+    let board_height = board[0].len() - 1;
 
     if x > 0 && y > 0 && board[x - 1][y - 1] {
         count += 1;
@@ -44,22 +44,22 @@ fn count_live_neighbours(board: &Vec<Vec<bool>>, x: usize, y: usize) -> u8 {
     if x > 0 && board[x - 1][y] {
         count += 1;
     }
-    if x > 0 && y < board_y && board[x - 1][y + 1] {
+    if x > 0 && y < board_height && board[x - 1][y + 1] {
         count += 1;
     }
     if y > 0 && board[x][y - 1] {
         count += 1;
     }
-    if y < board_y && board[x][y + 1] {
+    if y < board_height && board[x][y + 1] {
         count += 1;
     }
-    if y > 0 && x < board_x && board[x + 1][y - 1] {
+    if y > 0 && x < board_width && board[x + 1][y - 1] {
         count += 1;
     }
-    if x < board_x && board[x + 1][y] {
+    if x < board_width && board[x + 1][y] {
         count += 1;
     }
-    if x < board_x && y < board_y && board[x + 1][y + 1] {
+    if x < board_width && y < board_height && board[x + 1][y + 1] {
         count += 1;
     }
     
